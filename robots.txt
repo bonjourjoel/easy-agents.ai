@@ -1,0 +1,5 @@
+# Allow all crawlers to access the public marketing site.
+# Publish the canonical sitemap location for automatic discovery.
+User-agent: *
+Allow: /
+Sitemap: https://easy-agents.ai/sitemap.xml
