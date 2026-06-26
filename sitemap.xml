@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Public canonical HTML pages only. Keep this list aligned with deployed routes. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://easy-agents.ai/</loc>
+  </url>
+  <url>
+    <loc>https://easy-agents.ai/fr/</loc>
+  </url>
+</urlset>
