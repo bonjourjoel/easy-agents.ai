@@ -159,11 +159,17 @@ function switchLang(select) {
   // A manual selection must stay pinned across every later visit, including
   // plain home links that route back through the canonical English root.
   if (storedLang !== null) {
-    if (storedLang === currentLang) {
+    const desiredStoredPath = buildLocalizedPath(storedLang, pathWithoutLang);
+    const currentFullPath =
+      window.location.pathname + window.location.search + window.location.hash;
+
+    // The English locale stays on the canonical root path without a prefix, so the
+    // pinned-language guard must compare full URLs rather than the raw prefix marker.
+    if (desiredStoredPath === currentFullPath) {
       return;
     }
 
-    window.location.replace(buildLocalizedPath(storedLang, pathWithoutLang));
+    window.location.replace(desiredStoredPath);
     return;
   }
 
