@@ -122,13 +122,33 @@ function getStoredLangOverride() {
 }
 
 /**
+ * Preserves the raw served suffix so later redirects stay on the exact same
+ * URL shape (`/`, `/fr/`, `/services/`, `/index.html`, etc.).
+ */
+function getPathWithoutLangSuffix() {
+  const pathname = window.location.pathname || "/";
+  const currentLang = getLangFromPath();
+
+  if (currentLang === null) {
+    return pathname;
+  }
+
+  const prefix = "/" + currentLang;
+  const suffix = pathname.slice(prefix.length);
+
+  return suffix.length > 0 ? suffix : "/";
+}
+
+/**
  * Rebuilds the target URL for a given language while preserving the current
  * path suffix, query string, and anchor fragment.
  */
-function buildLocalizedPath(lang, pathWithoutLang) {
-  const suffix =
-    pathWithoutLang.length > 0 ? "/" + pathWithoutLang.join("/") : "/";
-  const localizedPath = lang === DEFAULT_LANG ? suffix : "/" + lang + suffix;
+function buildLocalizedPath(lang, pathWithoutLangSuffix) {
+  const suffix = pathWithoutLangSuffix || "/";
+  const localizedPath =
+    lang === DEFAULT_LANG
+      ? suffix
+      : "/" + lang + (suffix === "/" ? "/" : suffix);
 
   return localizedPath + window.location.search + window.location.hash;
 }
@@ -140,10 +160,8 @@ function buildLocalizedPath(lang, pathWithoutLang) {
 function switchLang(select) {
   localStorage.setItem("lang-override", select.value);
 
-  const parts = window.location.pathname.split("/").filter(Boolean);
-  const hasLang = parts.length > 0 && SUPPORTED_LANGS.includes(parts[0]);
-  const pathWithoutLang = hasLang ? parts.slice(1) : parts;
-  const newPath = buildLocalizedPath(select.value, pathWithoutLang);
+  const pathWithoutLangSuffix = getPathWithoutLangSuffix();
+  const newPath = buildLocalizedPath(select.value, pathWithoutLangSuffix);
 
   window.location.href = newPath;
 }
@@ -151,15 +169,17 @@ function switchLang(select) {
 // ---- Auto lang redirect ----
 
 (function () {
-  const parts = window.location.pathname.split("/").filter(Boolean);
   const currentLang = getLangFromPath();
-  const pathWithoutLang = currentLang !== null ? parts.slice(1) : parts;
+  const pathWithoutLangSuffix = getPathWithoutLangSuffix();
   const storedLang = getStoredLangOverride();
 
   // A manual selection must stay pinned across every later visit, including
   // plain home links that route back through the canonical English root.
   if (storedLang !== null) {
-    const desiredStoredPath = buildLocalizedPath(storedLang, pathWithoutLang);
+    const desiredStoredPath = buildLocalizedPath(
+      storedLang,
+      pathWithoutLangSuffix,
+    );
     const currentFullPath =
       window.location.pathname + window.location.search + window.location.hash;
 
@@ -186,7 +206,9 @@ function switchLang(select) {
     return;
   }
 
-  window.location.replace(buildLocalizedPath(browserLang, pathWithoutLang));
+  window.location.replace(
+    buildLocalizedPath(browserLang, pathWithoutLangSuffix),
+  );
 })();
 
 // ---- Lang switcher init ----
