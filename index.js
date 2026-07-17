@@ -112,6 +112,28 @@ function getLangFromPath() {
 }
 
 /**
+ * Returns the last language explicitly selected by the visitor, if any.
+ * Invalid values are ignored so the public-site router stays deterministic.
+ */
+function getStoredLangOverride() {
+  const storedLang = localStorage.getItem("lang-override");
+
+  return SUPPORTED_LANGS.includes(storedLang) ? storedLang : null;
+}
+
+/**
+ * Rebuilds the target URL for a given language while preserving the current
+ * path suffix, query string, and anchor fragment.
+ */
+function buildLocalizedPath(lang, pathWithoutLang) {
+  const suffix =
+    pathWithoutLang.length > 0 ? "/" + pathWithoutLang.join("/") : "/";
+  const localizedPath = lang === DEFAULT_LANG ? suffix : "/" + lang + suffix;
+
+  return localizedPath + window.location.search + window.location.hash;
+}
+
+/**
  * Switches between the root English page and the generated `/fr/` page.
  * The suffix after the language prefix is preserved so the logic stays reusable.
  */
@@ -121,10 +143,7 @@ function switchLang(select) {
   const parts = window.location.pathname.split("/").filter(Boolean);
   const hasLang = parts.length > 0 && SUPPORTED_LANGS.includes(parts[0]);
   const pathWithoutLang = hasLang ? parts.slice(1) : parts;
-  const suffix =
-    pathWithoutLang.length > 0 ? "/" + pathWithoutLang.join("/") : "/";
-  const newPath =
-    select.value === DEFAULT_LANG ? suffix : "/" + select.value + suffix;
+  const newPath = buildLocalizedPath(select.value, pathWithoutLang);
 
   window.location.href = newPath;
 }
@@ -132,13 +151,25 @@ function switchLang(select) {
 // ---- Auto lang redirect ----
 
 (function () {
-  // A language prefix already present in the URL always wins.
-  if (getLangFromPath() !== null) {
+  const parts = window.location.pathname.split("/").filter(Boolean);
+  const currentLang = getLangFromPath();
+  const pathWithoutLang = currentLang !== null ? parts.slice(1) : parts;
+  const storedLang = getStoredLangOverride();
+
+  // A manual selection must stay pinned across every later visit, including
+  // plain home links that route back through the canonical English root.
+  if (storedLang !== null) {
+    if (storedLang === currentLang) {
+      return;
+    }
+
+    window.location.replace(buildLocalizedPath(storedLang, pathWithoutLang));
     return;
   }
 
-  // An explicit English override must keep the user on the root page.
-  if (localStorage.getItem("lang-override") === DEFAULT_LANG) {
+  // Without an explicit preference, only prefix-less URLs may be redirected
+  // according to browser language detection.
+  if (currentLang !== null) {
     return;
   }
 
@@ -149,7 +180,7 @@ function switchLang(select) {
     return;
   }
 
-  window.location.replace("/" + browserLang + "/");
+  window.location.replace(buildLocalizedPath(browserLang, pathWithoutLang));
 })();
 
 // ---- Lang switcher init ----
@@ -158,6 +189,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // The select is synchronized after the redirect logic so the UI always reflects the effective page language.
   const sel = document.querySelector(".lang-switcher select");
   if (sel) {
-    sel.value = getLangFromPath() || DEFAULT_LANG;
+    sel.value = getStoredLangOverride() || getLangFromPath() || DEFAULT_LANG;
   }
 });
