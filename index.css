@@ -22,7 +22,7 @@ body {
 }
 
 /* ========== CSS VARIABLES ========== */
-/* Cool blue accent + neutrals, aligned with the AICode homepage "B" system. */
+/* These tokens remain the local foundation consumed by the mirrored shell assets. */
 :root {
   --accent: #8aa9ff;
   --accent-dim: #6e8fe0;
@@ -65,7 +65,7 @@ body::before {
 }
 
 /* ========== TYPOGRAPHY ========== */
-/* Mirror the AICode homepage font system so both public sites feel like the same product family. */
+/* The page keeps the same type system as AICode so the two domains feel like one product family. */
 h1,
 h2 {
   font-family: "Manrope", sans-serif;
@@ -78,15 +78,6 @@ h2 {
   font-size: clamp(1.44rem, 2.8vw, 2.4rem);
 }
 
-/* Reserve the monospace family for compact technical labels, comparable to AICode's eyebrow and code accents. */
-h3 {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
 p {
   line-height: 1.75;
 }
@@ -96,7 +87,7 @@ a {
   text-decoration: none;
 }
 
-/* Keep future technical snippets on the same monospace family used by the main AICode marketing site. */
+/* Keep technical accents aligned with the canonical AICode marketing typography. */
 code,
 .mono {
   font-family: "JetBrains Mono", monospace;
@@ -158,7 +149,7 @@ code,
 }
 
 /* ========== BUTTONS ========== */
-/* Both variants keep a visible outline, matching the AICode homepage button system. */
+/* The shared footer reuses these primitives, so they stay local but generic. */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -191,6 +182,11 @@ code,
   box-shadow: 0 6px 24px rgba(138, 169, 255, 0.3);
 }
 
+.btn-primary-sm {
+  font-size: 0.85rem;
+  padding: 0.6rem 1.4rem;
+}
+
 .btn-outline {
   background: transparent;
   color: var(--text);
@@ -203,70 +199,8 @@ code,
   transform: translateY(-1px);
 }
 
-/* ========== TOP NAVIGATION ========== */
-.site-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 500;
-  height: 64px;
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  background: rgba(11, 11, 11, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: background 0.3s;
-}
-
-.nav-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-family: "Manrope", sans-serif;
-  font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: -0.01em;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.nav-contact {
-  padding: 0.5rem 1.2rem;
-  font-size: 0.85rem;
-}
-
-/* ========== LANGUAGE SWITCHER ========== */
-.lang-switcher select {
-  background: transparent;
-  color: var(--text-dim);
-  border: 1px solid var(--border);
-  padding: 0.28rem 0.55rem;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.78rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.lang-switcher select:hover {
-  border-color: var(--accent);
-  color: var(--text);
-}
-
-.lang-switcher select option {
-  background: var(--bg2);
-  color: var(--text);
-}
-
 /* ========== HERO ========== */
+/* The page-specific content starts below the shared fixed header mirrored from AICode. */
 .hero-section {
   padding-top: 112px;
   padding-bottom: 4.5rem;
@@ -361,97 +295,14 @@ code,
   padding-top: 1.75rem;
 }
 
-/* ========== FOOTER ========== */
-footer {
-  background: var(--bg2);
-  border-top: 1px solid var(--border);
-  padding: 3rem 0;
-}
-
-.footer-inner {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr;
-  gap: 2.5rem;
-}
-
-.footer-title {
-  font-family: "Manrope", sans-serif;
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: -0.01em;
-}
-
-.footer-brand p {
-  margin-top: 0.85rem;
-  color: var(--text-dim);
-  font-size: 0.9rem;
-  max-width: 28rem;
-}
-
-.footer-col ul {
-  list-style: none;
-}
-
-.footer-col h3 {
-  color: var(--text-muted);
-  margin-bottom: 1rem;
-}
-
-.footer-col li {
-  margin-bottom: 0.7rem;
-}
-
-.footer-col a {
-  color: var(--text-dim);
-  transition: color 0.2s;
-}
-
-.footer-col a:hover {
-  color: var(--accent);
-}
-
-.footer-bottom {
-  margin-top: 2.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
-}
-
-.footer-legal {
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  line-height: 1.7;
-}
-
 /* ========== RESPONSIVE ========== */
 @media (max-width: 900px) {
   .cards-grid {
     grid-template-columns: 1fr;
   }
-
-  .footer-inner {
-    grid-template-columns: 1fr 1fr;
-  }
 }
 
 @media (max-width: 600px) {
-  .site-nav {
-    height: 60px;
-    padding: 0 1rem;
-  }
-
-  .nav-right {
-    gap: 0.4rem;
-  }
-
-  .nav-contact,
-  .btn {
-    padding: 0.75rem 1rem;
-  }
-
-  .nav-contact {
-    font-size: 0.82rem;
-  }
-
   .container {
     padding: 0 1rem;
   }
@@ -469,7 +320,11 @@ footer {
     padding: 1.5rem;
   }
 
-  .footer-inner {
-    grid-template-columns: 1fr;
+  .btn {
+    padding: 0.75rem 1rem;
+  }
+
+  .btn-primary-sm {
+    padding: 0.6rem 1.4rem;
   }
 }

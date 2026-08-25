@@ -47,36 +47,88 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
     />
     <link rel="stylesheet" href="/index.css" />
+    <!-- The shared shell styles are mirrored locally because easy-agents.ai is deployed separately. -->
+    <link rel="stylesheet" href="/assets/header.css" />
+    <link rel="stylesheet" href="/assets/footer.css" />
     <script defer src="/index.js"></script>
   </head>
 
   <body>
-    <!-- The top navigation intentionally keeps only the brand, language switcher, and support action. -->
+    <!-- AICODE_SHARED_HEADER_START: generated from partials/header.html -->
     <nav class="site-nav">
-      <a href="/" class="nav-brand" aria-label="Accueil EasyAgents">
-        <span>EasyAgents</span>
+      <a href="https://ai-code.ai/" class="nav-logo" aria-label="Accueil AICode">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 100 100"
+          class="logo-svg"
+        >
+          <path
+            fill="currentColor"
+            d="M1,90.4 C4.3,86.6 8.1,83.5 10.9,79.7 C18.8,69.5 21.2,57 23.9,44.8 C26.6,32.9 28.6,20.8 31.2,8.8 C31.6,6.6 32.4,3.8 35.6,4 C39.2,4.3 39.4,7.3 40,9.9 C43.7,26.6 47.3,43.3 51,59.9 C53.2,69.9 58.3,78.4 64.8,86.1 C66.2,87.8 68.8,89.8 70.6,89.6 C75.2,89.1 79.8,87.2 80.8,82.1 C82.3,75.1 83,68 84,60.9 C84.1,59.8 83.7,58.2 84.3,57.5 C85.7,55.8 87.6,53.4 89.4,53.3 C92.2,53.2 92.3,56.2 92,58.5 C90.7,67.3 89.4,76.1 88,84.9 C86.8,92.5 81.1,95.2 74.5,97 C68.3,98.6 63.5,97.3 59,91.8 C51.2,82.4 45.6,72.2 42.8,60.2 C38,60.2 33.2,60.2 28.1,60.2 C25.7,73.6 18.2,84.4 9.8,94.6 C7.5,97.5 4.6,97.5 1.3,95.7 L1,90.4Z M37.3,52 C34.8,52 33.1,52 30.8,52 C32.3,44 33.8,36.3 35.4,28.1 C37,35.5 38.6,42.3 39.8,49.3 C39.98,50 38.2,51.1 37.3,52Z"
+          />
+          <path
+            fill="currentColor"
+            d="M101,42.6 C100.1,43.7 98.8,44.3 98.4,45.2 C95.6,51.4 87.4,51.9 83.1,50.5 C76.9,48.5 74,42.8 75,35.7 C75.8,30.2 80.8,26.4 86.6,25.9 C93.6,25.4 97.3,29.4 100.7,34.3 L101,42.6Z M86.7,34 C83.3,34.6 82.3,37.2 83.2,39.8 C83.7,41.2 86.3,42.8 87.9,42.7 C89.3,42.6 91.4,40.6 91.8,39 C92.6,36 90.9,34 86.7,34Z"
+          />
+        </svg>
+        <span>AICode</span>
       </a>
 
-      <div class="nav-right">
+      <!-- One shared panel hosts the single language selector and the single nav list.
+           Desktop keeps them inline, while mobile reuses the exact same nodes in the fullscreen sheet. -->
+      <div id="site-nav-panel" class="nav-panel" data-nav-panel aria-hidden="false">
         <div class="lang-switcher">
           <select onchange="switchLang(this)" aria-label="Sélection de la langue">
-            <option value="en" selected>EN</option>
-            <option value="fr">FR</option>
+            <option value="en">EN</option>
+            <option value="fr" selected>FR</option>
           </select>
         </div>
-
-        <a
-          href="https://aisovereignlabs.zohodesk.eu"
-          target="_blank"
-          rel="noopener"
-          id="nav-contact"
-          class="btn btn-outline nav-contact"
-          >Support</a
-        >
+        <ul class="nav-links">
+          <li><a href="https://ai-code.ai/fr/#hero">Vitesse lumière</a></li>
+          <li><a href="https://ai-code.ai/fr/#case-study">Case study</a></li>
+          <li><a href="https://ai-code.ai/fr/#speed">Fonctionnement</a></li>
+          <li><a href="https://ai-code.ai/fr/#enterprise">Entreprise</a></li>
+          <li><a href="https://ai-code.ai/fr/#install">Installation</a></li>
+          <li><a href="https://ai-code.ai/fr/#pricing">Tarifs</a></li>
+          <li>
+            <a
+              href="https://aisovereignlabs.zohodesk.eu"
+              target="_blank"
+              rel="noopener"
+              id="nav-contact"
+              >Support</a
+            >
+          </li>
+        </ul>
       </div>
-    </nav>
 
-    <!-- The landing page stays intentionally minimal: one video hero, two offer cards, one compact footer. -->
+      <a
+        href="https://marketplace.visualstudio.com/items?itemName=joelabenhaim.aicode-ja"
+        target="_blank"
+        rel="noopener"
+        class="btn btn-primary nav-cta"
+      >
+        ↓ Installer gratuitement
+      </a>
+
+      <button
+        type="button"
+        class="nav-toggle"
+        data-nav-toggle
+        aria-controls="site-nav-panel"
+        aria-expanded="false"
+        aria-label="Ouvrir le menu mobile"
+        data-label-open="Ouvrir le menu mobile"
+        data-label-close="Fermer le menu mobile"
+      >
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+      </button>
+    </nav>
+    <!-- AICODE_SHARED_HEADER_END -->
+
+    <!-- The landing page stays intentionally minimal: one video hero and two offer cards. -->
     <main>
       <!-- The hero stays video-only on purpose. The hidden h1 preserves document semantics and accessibility. -->
       <section id="hero" class="section hero-section">
@@ -117,11 +169,12 @@
               <div class="site-card-body">
                 <h2>EasyAgents en prestation</h2>
                 <p>
-                  Besoin d'une migration de framework, d'une transpilation, d'une
-                  génération de tests ou d'une passe de documentation sur des
-                  centaines de fichiers ? J'audite la codebase, je conçois
-                  l'agent et je l'exécute sur votre réseau. Votre code reste sur
-                  votre infrastructure.
+                  Besoin d'une migration de framework, d'un audit de sécurité,
+                  d'une transpilation, d'une génération de tests, d'une passe
+                  de documentation ou d'une reprise de code legacy sans
+                  mainteneur historique sur des centaines de fichiers ? Nous
+                  auditons la codebase, concevons l'agent et l'exécutons sur
+                  votre réseau. Votre code reste sur votre infrastructure.
                 </p>
               </div>
 
@@ -149,11 +202,7 @@
               </div>
 
               <div class="site-card-actions">
-                <a
-                  href="https://ai-code.ai/"
-                  target="_blank"
-                  rel="noopener"
-                  class="btn btn-outline btn-full"
+                <a href="https://ai-code.ai/fr/" class="btn btn-outline btn-full"
                   >Voir AICode</a
                 >
               </div>
@@ -163,48 +212,93 @@
       </section>
     </main>
 
-    <!-- The footer keeps the public-site tone of AICode while staying intentionally lighter. -->
+    <!-- AICODE_SHARED_FOOTER_START: generated from partials/footer.html -->
     <footer id="legal">
       <div class="container">
         <div class="footer-inner">
-          <div class="footer-brand reveal reveal-delay-1">
-            <div class="footer-title">EasyAgents</div>
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                <path
+                  fill="currentColor"
+                  d="M1,90.4 C4.3,86.6 8.1,83.5 10.9,79.7 C18.8,69.5 21.2,57 23.9,44.8 C26.6,32.9 28.6,20.8 31.2,8.8 C31.6,6.6 32.4,3.8 35.6,4 C39.2,4.3 39.4,7.3 40,9.9 C43.7,26.6 47.3,43.3 51,59.9 C53.2,69.9 58.3,78.4 64.8,86.1 C66.2,87.8 68.8,89.8 70.6,89.6 C75.2,89.1 79.8,87.2 80.8,82.1 C82.3,75.1 83,68 84,60.9 C84.1,59.8 83.7,58.2 84.3,57.5 C85.7,55.8 87.6,53.4 89.4,53.3 C92.2,53.2 92.3,56.2 92,58.5 C90.7,67.3 89.4,76.1 88,84.9 C86.8,92.5 81.1,95.2 74.5,97 C68.3,98.6 63.5,97.3 59,91.8 C51.2,82.4 45.6,72.2 42.8,60.2 C38,60.2 33.2,60.2 28.1,60.2 C25.7,73.6 18.2,84.4 9.8,94.6 C7.5,97.5 4.6,97.5 1.3,95.7 L1,90.4Z M37.3,52 C34.8,52 33.1,52 30.8,52 C32.3,44 33.8,36.3 35.4,28.1 C37,35.5 38.6,42.3 39.8,49.3 C39.98,50 38.2,51.1 37.3,52Z"
+                />
+                <path
+                  fill="currentColor"
+                  d="M101,42.6 C100.1,43.7 98.8,44.3 98.4,45.2 C95.6,51.4 87.4,51.9 83.1,50.5 C76.9,48.5 74,42.8 75,35.7 C75.8,30.2 80.8,26.4 86.6,25.9 C93.6,25.4 97.3,29.4 100.7,34.3 L101,42.6Z M86.7,34 C83.3,34.6 82.3,37.2 83.2,39.8 C83.7,41.2 86.3,42.8 87.9,42.7 C89.3,42.6 91.4,40.6 91.8,39 C92.6,36 90.9,34 86.7,34Z"
+                />
+              </svg>
+              AICode
+            </div>
             <p>
-              EasyAgents transforme un tableur en flotte contrôlée de sessions
-              de codage IA autonomes, exécutées sur votre propre
-              infrastructure.
+              Un assistant de codage IA spec-driven qui livre du code de
+              production à vitesse industrielle, sans code review.
             </p>
+            <p class="footer-copyright">© 2026 AI Sovereign Labs</p>
           </div>
 
-          <div class="footer-col reveal reveal-delay-2">
-            <h3>Ressources</h3>
+          <div class="footer-col">
+            <h5>Produit</h5>
+            <ul>
+              <li><a href="https://ai-code.ai/fr/workflow/">Workflow spec-driven</a></li>
+              <li><a href="https://ai-code.ai/fr/index-5d/">Index 5D</a></li>
+              <li><a href="https://ai-code.ai/fr/quality/">Qualité imposée</a></li>
+              <li><a href="https://ai-code.ai/fr/legacy/">Codebases legacy</a></li>
+              <li><a href="https://ai-code.ai/fr/sovereignty/">Souveraineté des données</a></li>
+              <li><a href="https://ai-code.ai/fr/execution-model/">Modèle d'exécution</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h5>Ressources</h5>
             <ul>
               <li>
-                <a href="https://ai-code.ai/" target="_blank" rel="noopener"
-                  >AICode</a
+                <a
+                  href="https://arxiv.org/abs/2608.12440"
+                  target="_blank"
+                  rel="noopener"
+                  >↗ Étude de cas complète, publiée sur arXiv</a
                 >
               </li>
               <li>
                 <a
-                  href="https://www.youtube.com/watch?v=o988mUmmjLc"
+                  href="https://ai-code.ai/docs/abenhaim-quality-assurance-fr.pdf"
                   target="_blank"
                   rel="noopener"
-                  >Vidéo de démonstration</a
+                  >Manifeste qualité (PDF)</a
                 >
               </li>
               <li>
                 <a
-                  href="https://aisovereignlabs.ai/"
+                  href="https://youtu.be/RMB0etc3DnI"
                   target="_blank"
                   rel="noopener"
+                  >Vidéo d'introduction</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://youtu.be/VPrU8WZJOVs"
+                  target="_blank"
+                  rel="noopener"
+                  >Démo en direct</a
+                >
+              </li>
+              <li>
+                <a href="https://aisovereignlabs.ai/fr/" target="_blank" rel="noopener"
                   >AI Sovereign Labs</a
+                >
+              </li>
+              <li>
+                <a href="https://ai-code.ai/docs/LICENSE.txt" target="_blank" rel="noopener"
+                  >Licence logicielle AICode</a
                 >
               </li>
             </ul>
           </div>
 
-          <div class="footer-col reveal reveal-delay-3">
-            <h3>Contact</h3>
+          <div class="footer-col">
+            <h5>Contact</h5>
             <ul>
               <li>
                 <a
@@ -215,17 +309,99 @@
                   >Support</a
                 >
               </li>
+              <li>
+                <a
+                  href="https://www.linkedin.com/company/ai-sovereign-labs"
+                  target="_blank"
+                  rel="noopener"
+                  >LinkedIn</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div class="footer-col footer-topics">
+            <h5>Pages thématiques</h5>
+            <ul>
+              <li>
+                <a href="https://ai-code.ai/topics/vs-cursor">AICode vs Cursor</a>
+              </li>
+              <li>
+                <a href="https://ai-code.ai/topics/vs-copilot"
+                  >AICode vs GitHub Copilot</a
+                >
+              </li>
+              <li>
+                <a href="https://ai-code.ai/topics/vs-claude-code"
+                  >AICode vs Claude Code</a
+                >
+              </li>
+              <li>
+                <a href="https://ai-code.ai/topics/legacy"
+                  >Legacy Enterprise Software</a
+                >
+              </li>
+              <li>
+                <a href="https://ai-code.ai/topics/data-sovereignty"
+                  >Data Sovereignty</a
+                >
+              </li>
+              <li>
+                <a href="https://ai-code.ai/topics/technical-debt"
+                  >Technical Debt and AI</a
+                >
+              </li>
             </ul>
           </div>
         </div>
 
-        <!-- The legal line deliberately stays compact, following the lighter public-site pattern. -->
-        <div class="footer-bottom reveal reveal-delay-3">
+        <div class="footer-bottom" id="mentions-legales">
           <div class="footer-legal">
-            AI Sovereign Labs SAS · Paris, France · © 2026
+            <strong>Mentions légales / Legal notice</strong><br />
+            <strong>AICode Éditeur / Publisher :</strong> AI Sovereign Labs, Société
+            par actions simplifiée à capital variable / French simplified
+            joint-stock company (SAS à capital variable)<br />
+            <strong>Capital social / Share capital :</strong> 30 000 € /
+            <strong>Siège social / Registered office :</strong> Paris, France<br />
+            <strong>Président / President :</strong> Joël Abenhaïm /
+            <strong>SIRET :</strong> 104 364 484 R.C.S.<br />
+            <strong>Licence logicielle AICode / AICode software license :</strong>
+            Le logiciel AICode est protégé par dépôt eSoleau n° DSO2026012803 auprès
+            de l'INPI (08/04/2026). / AICode software is protected by eSoleau
+            deposit no. DSO2026012803 with the INPI (08/04/2026).<br />
+            Toute reproduction ou distribution sans autorisation est interdite. /
+            Unauthorized reproduction or distribution is prohibited. © 2026 AI
+            Sovereign Labs. Tous droits réservés / All rights reserved.<br />
+            <strong>Hébergement / Hosting :</strong>
+            <a
+              href="https://aisovereignlabs.ai/fr/"
+              target="_blank"
+              rel="noopener"
+              class="footer-legal-link"
+              >AI Sovereign Labs</a
+            >
+            · <strong>Contact :</strong>
+            <a
+              href="https://aisovereignlabs.zohodesk.eu"
+              target="_blank"
+              rel="noopener"
+              id="footer-legal-contact"
+              >Support</a
+            >
+          </div>
+          <div>
+            <a
+              href="https://marketplace.visualstudio.com/items?itemName=joelabenhaim.aicode-ja"
+              target="_blank"
+              rel="noopener"
+              class="btn btn-primary btn-primary-sm"
+            >
+              ↓ Installer gratuitement
+            </a>
           </div>
         </div>
       </div>
     </footer>
+    <!-- AICODE_SHARED_FOOTER_END -->
   </body>
 </html>

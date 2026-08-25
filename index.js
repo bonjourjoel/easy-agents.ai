@@ -1,56 +1,92 @@
 // ---- Scroll reveal ----
 
 (function () {
-  var els = document.querySelectorAll(".reveal");
+  var elements = document.querySelectorAll(".reveal");
 
-  // Older browsers simply show the content immediately when IntersectionObserver is unavailable.
+  // Older browsers still need the content to appear immediately even when the
+  // progressive entrance animation cannot be observed.
   if (!window.IntersectionObserver) {
-    els.forEach(function (el) {
-      el.classList.add("visible");
+    elements.forEach(function (element) {
+      element.classList.add("visible");
     });
     return;
   }
 
   // The observer only exists to trigger a subtle entrance animation once per element.
-  var obs = new IntersectionObserver(
+  var observer = new IntersectionObserver(
     function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          obs.unobserve(entry.target);
+        if (!entry.isIntersecting) {
+          return;
         }
+
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
       });
     },
     { threshold: 0.08, rootMargin: "0px 0px -40px 0px" },
   );
 
-  els.forEach(function (el) {
-    obs.observe(el);
+  elements.forEach(function (element) {
+    observer.observe(element);
   });
 })();
 
-// ---- Sticky nav background on scroll ----
+// ---- Shared header runtime contract ----
 
-(function () {
-  var nav = document.querySelector(".site-nav");
+const SITE_NAV_MOBILE_QUERY = "(max-width: 600px)";
+const DEFAULT_SITE_NAV_BACKGROUND = "rgba(11,11,11,0.88)";
+const SCROLLED_SITE_NAV_BACKGROUND = "rgba(11,11,11,0.97)";
+const OPEN_SITE_NAV_BACKGROUND = "rgba(11,11,11,0.98)";
 
-  // The guard keeps the script harmless if the markup is loaded partially during future refactors.
+/**
+ * Returns whether the mirrored AICode header should switch to its mobile fullscreen sheet.
+ */
+function isSiteNavMobile() {
+  return window.matchMedia(SITE_NAV_MOBILE_QUERY).matches;
+}
+
+/**
+ * Computes the correct shared-header background for the current scroll and mobile-menu state.
+ */
+function computeSiteNavBackground(nav) {
+  if (!nav) {
+    return DEFAULT_SITE_NAV_BACKGROUND;
+  }
+
+  // The mobile fullscreen sheet needs an opaque header cap so the burger stays
+  // readable while the open sheet animates underneath it.
+  if (nav.classList.contains("is-mobile-nav-open")) {
+    return OPEN_SITE_NAV_BACKGROUND;
+  }
+
+  return window.scrollY > 40
+    ? SCROLLED_SITE_NAV_BACKGROUND
+    : DEFAULT_SITE_NAV_BACKGROUND;
+}
+
+/**
+ * Reapplies the shared-header background after scroll or mobile-menu state changes.
+ */
+function syncSiteNavBackground() {
+  var nav =
+    document.querySelector(".site-nav") || document.querySelector("nav");
+
   if (!nav) {
     return;
   }
 
-  window.addEventListener(
-    "scroll",
-    function () {
-      // The darker state improves contrast once content starts scrolling under the fixed bar.
-      nav.style.background =
-        window.scrollY > 40 ? "rgba(11,11,11,0.97)" : "rgba(11,11,11,0.88)";
-    },
-    { passive: true },
-  );
+  nav.style.background = computeSiteNavBackground(nav);
+}
+
+(function () {
+  syncSiteNavBackground();
+  window.addEventListener("scroll", syncSiteNavBackground, { passive: true });
 })();
 
 // ---- Lang utils ----
+// The shared shell links are already rewritten at build time. Runtime language
+// logic must therefore stay local to the EasyAgents domain only.
 
 const SUPPORTED_LANGS = ["en", "fr"];
 const DEFAULT_LANG = "en";
@@ -61,6 +97,7 @@ const DEFAULT_LANG = "en";
  */
 function getLangFromPath() {
   const parts = window.location.pathname.split("/").filter(Boolean);
+
   return parts.length > 0 && SUPPORTED_LANGS.includes(parts[0])
     ? parts[0]
     : null;
@@ -68,7 +105,7 @@ function getLangFromPath() {
 
 /**
  * Returns the last language explicitly selected by the visitor, if any.
- * Invalid values are ignored so the public-site router stays deterministic.
+ * Invalid values are ignored so the local router stays deterministic.
  */
 function getStoredLangOverride() {
   const storedLang = localStorage.getItem("lang-override");
@@ -77,8 +114,7 @@ function getStoredLangOverride() {
 }
 
 /**
- * Preserves the raw served suffix so later redirects stay on the exact same
- * URL shape (`/`, `/fr/`, `/services/`, `/index.html`, etc.).
+ * Preserves the raw served suffix so redirects stay on the exact same URL shape.
  */
 function getPathWithoutLangSuffix() {
   const pathname = window.location.pathname || "/";
@@ -95,8 +131,7 @@ function getPathWithoutLangSuffix() {
 }
 
 /**
- * Rebuilds the target URL for a given language while preserving the current
- * path suffix, query string, and anchor fragment.
+ * Rebuilds the target URL for a given language while preserving the current path suffix.
  */
 function buildLocalizedPath(lang, pathWithoutLangSuffix) {
   const suffix = pathWithoutLangSuffix || "/";
@@ -109,8 +144,7 @@ function buildLocalizedPath(lang, pathWithoutLangSuffix) {
 }
 
 /**
- * Switches between the root English page and the generated `/fr/` page.
- * The suffix after the language prefix is preserved so the logic stays reusable.
+ * Switches between the root English page and the generated `/fr/` page on the current domain.
  */
 function switchLang(select) {
   localStorage.setItem("lang-override", select.value);
@@ -128,6 +162,15 @@ function switchLang(select) {
   const pathWithoutLangSuffix = getPathWithoutLangSuffix();
   const storedLang = getStoredLangOverride();
 
+  // An explicit language segment in the destination URL must win over stale
+  // domain-local storage. This keeps translated inter-domain links stable.
+  if (currentLang !== null) {
+    if (storedLang !== currentLang) {
+      localStorage.setItem("lang-override", currentLang);
+    }
+    return;
+  }
+
   // A manual selection must stay pinned across every later visit, including
   // plain home links that route back through the canonical English root.
   if (storedLang !== null) {
@@ -138,8 +181,6 @@ function switchLang(select) {
     const currentFullPath =
       window.location.pathname + window.location.search + window.location.hash;
 
-    // The English locale stays on the canonical root path without a prefix, so the
-    // pinned-language guard must compare full URLs rather than the raw prefix marker.
     if (desiredStoredPath === currentFullPath) {
       return;
     }
@@ -148,15 +189,8 @@ function switchLang(select) {
     return;
   }
 
-  // Without an explicit preference, only prefix-less URLs may be redirected
-  // according to browser language detection.
-  if (currentLang !== null) {
-    return;
-  }
-
   const browserLang = (navigator.language || "").slice(0, 2).toLowerCase();
 
-  // Only supported non-default languages should redirect away from the canonical root path.
   if (browserLang === DEFAULT_LANG || !SUPPORTED_LANGS.includes(browserLang)) {
     return;
   }
@@ -168,10 +202,106 @@ function switchLang(select) {
 
 // ---- Lang switcher init ----
 
-document.addEventListener("DOMContentLoaded", function () {
-  // The select is synchronized after the redirect logic so the UI always reflects the effective page language.
-  const sel = document.querySelector(".lang-switcher select");
-  if (sel) {
-    sel.value = getStoredLangOverride() || getLangFromPath() || DEFAULT_LANG;
+/**
+ * Keeps the shared language selector synchronized with the effective EasyAgents locale.
+ */
+function initLangSelect() {
+  const select = document.querySelector(".lang-switcher select");
+
+  if (!select) {
+    return;
   }
+
+  select.value = getStoredLangOverride() || getLangFromPath() || DEFAULT_LANG;
+}
+
+// ---- Mobile nav fullscreen sheet ----
+
+/**
+ * Wires the shared mobile burger to the fullscreen header sheet without duplicating
+ * the language selector or the nav links in the DOM.
+ */
+function initMobileNav() {
+  var nav =
+    document.querySelector(".site-nav") || document.querySelector("nav");
+
+  if (!nav) {
+    return;
+  }
+
+  var toggle = nav.querySelector("[data-nav-toggle]");
+  var panel = nav.querySelector("[data-nav-panel]");
+
+  if (!toggle || !panel) {
+    return;
+  }
+
+  /**
+   * Keeps ARIA state, body scroll locking, and header background aligned with the
+   * actual mobile-sheet state after every interaction and resize.
+   */
+  function syncMobileNavState() {
+    var isMobile = isSiteNavMobile();
+
+    // Resizing back to desktop must always tear the mobile state down because the
+    // desktop header reuses the same DOM nodes inline.
+    if (!isMobile && nav.classList.contains("is-mobile-nav-open")) {
+      nav.classList.remove("is-mobile-nav-open");
+    }
+
+    var isOpen = isMobile && nav.classList.contains("is-mobile-nav-open");
+    var openLabel =
+      toggle.getAttribute("data-label-open") || "Open mobile menu";
+    var closeLabel =
+      toggle.getAttribute("data-label-close") || "Close mobile menu";
+
+    toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    toggle.setAttribute("aria-label", isOpen ? closeLabel : openLabel);
+    panel.setAttribute("aria-hidden", isMobile ? String(!isOpen) : "false");
+    document.body.classList.toggle("has-mobile-nav-open", isOpen);
+    syncSiteNavBackground();
+  }
+
+  toggle.addEventListener("click", function () {
+    if (!isSiteNavMobile()) {
+      return;
+    }
+
+    nav.classList.toggle("is-mobile-nav-open");
+    syncMobileNavState();
+  });
+
+  panel.addEventListener("click", function (event) {
+    var navLink = event.target.closest(".nav-links a");
+
+    if (!navLink || !isSiteNavMobile()) {
+      return;
+    }
+
+    // Same-page anchors do not reload the document, so the mobile sheet must close
+    // immediately after the tap to reveal the destination section.
+    nav.classList.remove("is-mobile-nav-open");
+    syncMobileNavState();
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key !== "Escape") {
+      return;
+    }
+
+    if (!nav.classList.contains("is-mobile-nav-open")) {
+      return;
+    }
+
+    nav.classList.remove("is-mobile-nav-open");
+    syncMobileNavState();
+  });
+
+  window.addEventListener("resize", syncMobileNavState);
+  syncMobileNavState();
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  initLangSelect();
+  initMobileNav();
 });

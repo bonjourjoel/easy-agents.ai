@@ -1,0 +1,303 @@
+/* AICode - shared styles for the statically precomposed header. */
+
+/* ========== NAVIGATION ROOT ========== */
+/* common.js owns the scroll-state background and the burger open/close state. */
+/* The markup intentionally keeps a single language selector and a single nav list.
+   Desktop shows them inline, while mobile reuses the exact same nodes inside a fullscreen sheet. */
+nav.site-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  height: 64px;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(11, 11, 11, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 0.3s;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 0 0 auto;
+  font-family: "Manrope", sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.nav-logo svg,
+.logo-svg {
+  width: 28px;
+  height: 28px;
+  color: #e78229;
+  /* brand orange logo mark */
+}
+
+/* This wrapper is the single source of truth for both the desktop inline controls
+   and the mobile fullscreen sheet. */
+.nav-panel {
+  margin-left: auto;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* Mobile needs the language selector first inside the sheet, but desktop still wants
+   the nav links visually before the selector. CSS order handles both with one DOM tree. */
+.lang-switcher {
+  order: 2;
+  flex: 0 0 auto;
+  margin-left: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.nav-links {
+  order: 1;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-links li {
+  flex: 0 0 auto;
+}
+
+.nav-links a {
+  display: block;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  border-radius: 3px;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: var(--text);
+}
+
+.nav-cta {
+  flex: 0 0 auto;
+  margin-left: 0.25rem;
+  padding: 0.5rem 1.2rem !important;
+  font-size: 0.85rem !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* ========== LANG SWITCHER ========== */
+.lang-switcher select {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.78rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-switcher select:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.lang-switcher select option {
+  background: var(--bg2);
+  color: var(--text);
+}
+
+/* ========== MOBILE BURGER ========== */
+/* The burger lives in the DOM on every page, but CSS keeps it out of the desktop flow. */
+.nav-toggle {
+  display: none;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    color 0.2s;
+}
+
+.nav-toggle:hover,
+.nav-toggle:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+  color: var(--accent-soft);
+}
+
+.nav-toggle:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 0.2rem;
+}
+
+.nav-toggle-bar {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transition:
+    transform 0.22s ease,
+    opacity 0.18s ease,
+    background 0.18s ease;
+}
+
+.nav-toggle-bar + .nav-toggle-bar {
+  margin-top: 0;
+}
+
+/* Mobile blocks the document scroll while the fullscreen sheet is open, otherwise
+   the page would continue moving behind the fixed panel. */
+body.has-mobile-nav-open {
+  overflow: hidden;
+}
+
+/* ========== MOBILE SHEET ========== */
+@media (max-width: 600px) {
+  nav.site-nav {
+    padding: 0 1rem;
+    gap: 0.75rem;
+  }
+
+  .nav-cta {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    margin-left: auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .nav-logo {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* The shared panel becomes a fullscreen sheet under the fixed header, keeping the
+     same selector and links but changing only their layout and interaction surface. */
+  .nav-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    width: 100vw;
+    min-height: 100dvh;
+    box-sizing: border-box;
+    margin-left: 0;
+    padding: calc(64px + 1.25rem) 1rem
+      max(2rem, env(safe-area-inset-bottom, 0rem));
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1.5rem;
+    overflow-y: auto;
+    background: rgba(11, 11, 11, 1);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-100%);
+    transition:
+      transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1),
+      opacity 0.22s ease,
+      visibility 0s linear 0.28s;
+  }
+
+  nav.site-nav.is-mobile-nav-open .nav-panel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition:
+      transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1),
+      opacity 0.22s ease,
+      visibility 0s;
+  }
+
+  .lang-switcher {
+    order: 1;
+    width: 100%;
+  }
+
+  .lang-switcher select {
+    width: min(12rem, 100%);
+    padding: 0.72rem 2.5rem 0.72rem 0.9rem;
+    font-size: 0.92rem;
+    background: var(--bg2);
+  }
+
+  .nav-links {
+    order: 2;
+    position: static;
+    left: auto;
+    transform: none;
+    width: 100%;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .nav-links li {
+    width: 100%;
+  }
+
+  .nav-links a {
+    width: 100%;
+    padding: 0.65rem 0;
+    font-size: 1.15rem;
+    border-radius: 0;
+  }
+
+  /* The icon transitions into a close glyph so the same button both opens and closes
+     the sheet without introducing a second control in the header. */
+  nav.site-nav.is-mobile-nav-open .nav-toggle {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+    color: var(--accent-soft);
+  }
+
+  nav.site-nav.is-mobile-nav-open .nav-toggle-bar:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  nav.site-nav.is-mobile-nav-open .nav-toggle-bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  nav.site-nav.is-mobile-nav-open .nav-toggle-bar:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+}
