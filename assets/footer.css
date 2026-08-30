@@ -45,6 +45,10 @@ footer {
   color: var(--text-muted);
 }
 
+.footer-copyright a:hover {
+  color: var(--accent);
+}
+
 .footer-col h5 {
   font-family: "Manrope", sans-serif;
   font-size: 0.8rem;
